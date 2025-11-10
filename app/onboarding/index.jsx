@@ -1,15 +1,19 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import {data} from './data'
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
-import Animated,{ useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-import { router } from 'expo-router';
-
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { onboardingData } from "./data";
 
 export default function Onboarding() {
-const [currentIndex,setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0);
 
- const opacity = useSharedValue(1);
+  const opacity = useSharedValue(1);
   const translateX = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -17,7 +21,7 @@ const [currentIndex,setCurrentIndex] = useState(0)
     transform: [{ translateX: translateX.value }],
   }));
 
- useEffect(() => {
+  useEffect(() => {
     opacity.value = 1;
     translateX.value = 20;
 
@@ -29,20 +33,20 @@ const [currentIndex,setCurrentIndex] = useState(0)
     });
   }, [currentIndex]);
 
-const nextSlide = ()=>{
-    if (currentIndex < data.length - 1) {
-        setCurrentIndex(currentIndex+1)
-    }else{
-        router.push('/cart')
+  const nextSlide = () => {
+    if (currentIndex < onboardingData.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      router.push("/cart");
     }
-}
-const prevSlide =()=>{
+  };
+  const prevSlide = () => {
     if (currentIndex > 0) {
-        setCurrentIndex(currentIndex - 1)
+      setCurrentIndex(currentIndex - 1);
     }
-}
+  };
 
-const currentSlide = data[currentIndex];
+  const currentSlide = onboardingData[currentIndex];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -63,7 +67,7 @@ const currentSlide = data[currentIndex];
           )}
           <TouchableOpacity onPress={nextSlide}>
             <Text style={styles.next}>
-              {currentIndex === data.length - 1
+              {currentIndex === onboardingData.length - 1
                 ? "Get Started"
                 : "Next"}
             </Text>
@@ -75,7 +79,7 @@ const currentSlide = data[currentIndex];
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#0A84FF" },
+  safe: { flex: 1, backgroundColor: "#0c0c0cd2" },
   container: {
     flex: 1,
     justifyContent: "center",
