@@ -23,8 +23,8 @@ export default function Index() {
     progress.value = withTiming(1, { duration: 1500 });
     translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
     setTimeout(()=>{
-      router.replace('/onboarding')
-    },3000)
+      router.replace('/maps')
+    },3400)
   }, []);
   return (
     <View style={styles.container}>
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffd900d2",
+    backgroundColor: "#FFBE00",
   },
   center: {
     alignItems: "center",

@@ -37,7 +37,7 @@ export default function Onboarding() {
     if (currentIndex < onboardingData.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      router.push("/cart");
+      router.push("/maps");
     }
   };
   const prevSlide = () => {
@@ -79,7 +79,7 @@ export default function Onboarding() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#0c0c0cd2" },
+  safe: { flex: 1, backgroundColor: "#22272B" },
   container: {
     flex: 1,
     justifyContent: "center",
@@ -110,15 +110,17 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   next: {
-    backgroundColor: "#2672d4ab",
-    color: "#fff",
+    backgroundColor: "#FFBE00",
+    color: "#22272B",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 30,
     fontWeight: "bold",
     overflow: "hidden",
     borderWidth: 2,
-    borderColor: "#2672d4ab",
+    borderColor: "#FFBE00",
+    fontSize: 18,
+    letterSpacing: 2,
   },
   prev: {
     color: "#fff",
@@ -129,5 +131,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     overflow: "hidden",
     fontWeight: "bold",
+    fontSize: 18,
+    letterSpacing: 2,
   },
 });

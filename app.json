@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.samiribourki.casataxisim",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/icon.jpg",
@@ -19,30 +20,49 @@
         "monochromeImage": "./assets/icon.jpg"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBCB2E3yrXD4XqX6CJH_3lh0BZEzVYl5Mo"
+        }
+      }
     },
+
     "web": {
       "output": "static",
-       "favicon": "./assets/icon.jpg"
+      "favicon": "./assets/icon.jpg"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
+          //  "image": "./assets/images/splash-icon.png",
+          // "imageWidth": 200,
+          // "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Allow $(PRODUCT_NAME) to use your location"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ab353bbf-b02e-4a3f-8b8f-74b806c78331"
+      }
     }
   }
 }
