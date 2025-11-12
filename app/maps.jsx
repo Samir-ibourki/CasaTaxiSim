@@ -1,67 +1,214 @@
-// //import { View, Text } from 'react-native'
-// import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-// import { SafeAreaView } from "react-native-safe-area-context";
+// import { useEffect, useState } from "react";
+// import { StyleSheet, View } from "react-native";
+// import MapView, { Marker } from "react-native-maps";
+// import { availableTaxis, region, region } from "../data/taxidata";
 
-// //let key = 'AIzaSyBCB2E3yrXD4XqX6CJH_3lh0BZEzVYl5Mo'
-// const casablancaRegion = {
-//   latitude: 33.5731,
-//   longitude: -7.5898,
-//   latitudeDelta: 0.05,
-//   longitudeDelta: 0.05,
-// };
-// export default function Maps() {
+// export default function MainMapScreen() {
+//   const [taxis, setTaxis] = useState(availableTaxis);
+//   const [region,setRegion] = useState(region)
+
+// const [userLocation, setUserLocation] = useState(null);
+//   const mapRef = useRef(null);
+
+// useEffect(() => {
+//     const fakeUser = {
+//       coords: { latitude: 33.5902, longitude: -7.6200 },
+//     };
+//     setUserLocation(fakeUser.coords);
+//   }, []);
+
+//   useEffect(() => {
+//     const interval = setInterval(() => {
+//       setTaxis((prevTaxis) =>
+//         prevTaxis.map((taxi) => ({
+//           ...taxi,
+//           coordinates: {
+//             latitude: taxi.coordinates.latitude + (Math.random() - 0.5) * 0.0005,
+//             longitude:
+//               taxi.coordinates.longitude + (Math.random() - 0.5) * 0.0005,
+//           },
+//         }))
+//       );
+//     }, 3000);
+
+//     return () => clearInterval(interval);
+//   }, []);
+
+// const centerOnUser = () => {
+//     if (userLocation && mapRef.current) {
+//       mapRef.current.animateToRegion(
+//         {
+//           ...region,
+//           latitude: userLocation.latitude,
+//           longitude: userLocation.longitude,
+//         },
+//         1000
+//       );
+//     }
+//   };
+  
 //   return (
-//     <SafeAreaView style={{ flex: 1 }}>
-//       <MapView
-//         style={{ width: "100%", height: "100%" }}
-//         provider={PROVIDER_GOOGLE}
-//         initialRegion={casablancaRegion}
-//         showsUserLocation
-//         showsMyLocationButton
-//       />
-//     </SafeAreaView>
+//     <View style={styles.container}>
+//       <MapView style={styles.map} initialRegion={region} zoomControlEnabled>
+//         {userLocation && (
+//           <Marker
+//             coordinate={userLocation}
+//             title="Vous êtes ici"
+//             pinColor="blue"
+//           />
+//         )}
+//         {locations.map((loc) => (
+//           <Marker
+//             key={loc.id}
+//             coordinate={loc.coordinates}
+//             title={loc.name}
+//             pinColor="red"
+//           />
+//         ))}
+
+//  {taxis.map((taxi) => (
+//           <Marker
+//             key={taxi.id}
+//             coordinate={taxi.coordinates}
+//             title={taxi.driver}
+//             description={`Plaque: ${taxi.plate} ⭐${taxi.rating}`}
+//             pinColor="gold"
+//           />
+//         ))}
+
+//       </MapView>
+//     </View>
 //   );
 // }
 
-// import { View, Text } from 'react-native'
-import { Image, StyleSheet, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import { AVAILABLE_TAXIS, CASA_CENTER, USER_POSITION } from "../data/taxidata";
+// const styles = StyleSheet.create({
+//   container: { flex: 1 },
+//   map: { flex: 1 },
+//   button: {
+//     position: "absolute",
+//     bottom: 40,
+//     left: "20%",
+//     right: "20%",
+//     backgroundColor: "#111",
+//     padding: 14,
+//     borderRadius: 25,
+//     alignItems: "center",
+//   },
+//   buttonText: { color: "#fff", fontWeight: "bold" },
+// });
+import React, { useEffect, useRef, useState } from "react";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import * as Location from "expo-location";
+import { availableTaxis, locations } from "../data/taxidata";
 
-export default function home() {
+
+export default function MapScreen() {
+  const [taxis, setTaxis] = useState(availableTaxis);
+  const [region, setRegion] = useState({
+    latitude: 33.5895,
+    longitude: -7.6039,
+    latitudeDelta: 0.06,
+    longitudeDelta: 0.06,
+  });
+  const [userLocation, setUserLocation] = useState(null);
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    const fakeUser = {
+      coords: { latitude: 33.5902, longitude: -7.6200 },
+    };
+    setUserLocation(fakeUser.coords);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTaxis((prevTaxis) =>
+        prevTaxis.map((taxi) => ({
+          ...taxi,
+          coordinates: {
+            latitude: taxi.coordinates.latitude + (Math.random() - 0.5) * 0.0005,
+            longitude:
+              taxi.coordinates.longitude + (Math.random() - 0.5) * 0.0005,
+          },
+        }))
+      );
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const centerOnUser = () => {
+    if (userLocation && mapRef.current) {
+      mapRef.current.animateToRegion(
+        {
+          ...region,
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+        },
+        1000
+      );
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} initialRegion={CASA_CENTER}>
-        <Marker
-          coordinate={USER_POSITION}
-          pinColor="blue"
-          title="You are here"
-        />
-        {AVAILABLE_TAXIS.map((taxi) => (
+      <MapView
+        ref={mapRef}
+        provider={PROVIDER_GOOGLE}
+        style={styles.map}
+        initialRegion={region}
+      >
+       
+        {userLocation && (
+          <Marker
+            coordinate={userLocation}
+            title="Vous êtes ici"
+            pinColor="blue"
+          />
+        )}
+
+        
+        {locations.map((loc) => (
+          <Marker
+            key={loc.id}
+            coordinate={loc.coordinates}
+            title={loc.name}
+            pinColor="red"
+          />
+        ))}
+
+       
+        {taxis.map((taxi) => (
           <Marker
             key={taxi.id}
-            coordinate={{
-              latitude: taxi.latitude,
-              longitude: taxi.longitude,
-            }}
-          >
-            <Image
-              source={require("../assets/icon.jpg")}
-
-            />
-          </Marker>
+            coordinate={taxi.coordinates}
+            title={taxi.driver}
+            description={`Plaque: ${taxi.plate} ⭐${taxi.rating}`}
+            pinColor="gold"
+          />
         ))}
       </MapView>
+
+      <TouchableOpacity style={styles.button} onPress={centerOnUser}>
+        <Text style={styles.buttonText}>📍 Revenir à ma position</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { flex: 1 },
+  map: { flex: 1 },
+  button: {
+    position: "absolute",
+    bottom: 40,
+    left: "20%",
+    right: "20%",
+    backgroundColor: "#111",
+    padding: 14,
+    borderRadius: 25,
+    alignItems: "center",
   },
-  map: {
-    width: "100%",
-    height: "100%",
-  },
+  buttonText: { color: "#fff", fontWeight: "bold" },
 });

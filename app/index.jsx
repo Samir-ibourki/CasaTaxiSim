@@ -23,9 +23,9 @@ export default function Index() {
     progress.value = withTiming(1, { duration: 1500 });
     translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
     setTimeout(()=>{
-      router.replace('/maps')
+      router.replace('maps')
     },3400)
-  }, []);
+  }, [progress, translateY]);
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.center, animatedStyle]}>
