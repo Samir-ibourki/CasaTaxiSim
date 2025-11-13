@@ -51,19 +51,19 @@
 //     marginLeft: 10,
 //   },
 // });
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import React, { useState } from "react";
+import {Text,StyleSheet, ScrollView } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import Animated, { FadeIn, SlideInUp } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
-import { calculateDistance, calculatePrice } from "../utils/distance";
+//import Animated, { FadeIn, SlideInUp } from "react-native-reanimated";
+
+//import { calculateDistance, calculatePrice } from "../utils/distance";
 import { locations } from "../data/taxidata";
 
 export default function ReservationScreen() {
   // Dropdown states
-  const [openDepart, setOpenDepart] = React.useState(false);
-  const [depart, setDepart] = React.useState(null);
-  const [itemsDepart, setItemsDepart] = React.useState(
+  const [openDepart, setOpenDepart] =useState(false);
+  const [depart, setDepart] =useState(null);
+  const [itemsDepart, setItemsDepart] =useState(
     locations.map((loc) => ({ label: loc.name, value: loc }))
   );
 
@@ -73,19 +73,18 @@ export default function ReservationScreen() {
     locations.map((loc) => ({ label: loc.name, value: loc }))
   );
 
-  // Calculated distance & price
-  const distanceKm = depart && destination ? calculateDistance(depart.coordinates, destination.coordinates) : 0;
-  const price = distanceKm ? calculatePrice(distanceKm) : 0;
+  
+  //const distanceKm = depart && destination ? calculateDistance(depart.coordinates, destination.coordinates) : 0;
+  //const price = distanceKm ? calculatePrice(distanceKm) : 0;
 
-  const handleConfirm = () => {
-    alert(`Réservation confirmée!\nDistance: ${distanceKm} km\nPrix: ${price} DH`);
-  };
+  // const handleConfirm = () => {
+  //   alert(`Réservation confirmée!\nDistance: ${distanceKm} km\nPrix: ${price} DH`);
+  // };
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Text style={styles.title}>Réservation Taxi</Text>
 
-      {/* Dropdown Depart */}
       <Text style={styles.label}>Départ</Text>
       <DropDownPicker
         open={openDepart}
@@ -115,29 +114,6 @@ export default function ReservationScreen() {
         zIndex={2000}
       />
 
-    
-      {depart && destination && (
-  <Animated.View entering={FadeIn.delay(400)} style={styles.resultBox}>
-    <Text style={styles.resultText}>
-      Distance: {distanceKm.toFixed(2)} km
-    </Text>
-    <Text style={styles.resultText}>
-      Prix estimé: {price.toFixed(2)} DH
-    </Text>
-  </Animated.View>
-)}
-
-
-      
-      {depart && destination && (
-        <Animated.View entering={SlideInUp.delay(600)} style={{ width: "100%" }}>
-          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-            <LinearGradient colors={["#fd6e4b", "#ff9f6d"]} style={styles.confirmGradient}>
-              <Text style={styles.confirmText}>Confirmer la réservation</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </Animated.View>
-      )}
     </ScrollView>
   );
 }

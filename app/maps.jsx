@@ -2,27 +2,25 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { availableTaxis, locations, region } from "../data/taxidata";
 
 export default function MapScreen() {
-  //const [state, setState] = useState(region);
   const [taxis, setTaxis] = useState(availableTaxis);
   const [location, setLocation] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   const mapRef = useRef(null);
 
+  //  mouvement du taxi
   useEffect(() => {
     const interval = setInterval(() => {
       setTaxis((prevTaxis) =>
         prevTaxis.map((taxi) => ({
           ...taxi,
           coordinates: {
-            latitude:
-              taxi.coordinates.latitude + (Math.random() - 0.5) * 0.0005,
-            longitude:
-              taxi.coordinates.longitude + (Math.random() - 0.5) * 0.0005,
+            latitude: taxi.coordinates.latitude + (Math.random() - 0.5) * 0.0005,
+            longitude: taxi.coordinates.longitude + (Math.random() - 0.5) * 0.0005,
           },
         }))
       );
@@ -31,17 +29,25 @@ export default function MapScreen() {
     return () => clearInterval(interval);
   }, []);
 
+  // recupérer position user
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Erreur", "Permission GPS refusée");
-        return;
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert("Erreur", "Permission GPS refusée");
+          setLoading(false);
+          return;
+        }
+
+        let currentLocation = await Location.getCurrentPositionAsync({});
+        setLocation(currentLocation.coords);
+      } catch (error) {
+        Alert.alert("Erreur", "Position actuelle non disponible. Activez le GPS.");
+        setLocation(region); 
+      } finally {
+        setLoading(false);
       }
-
-      let currentLocation = await Location.getCurrentPositionAsync({});
-
-      setLocation(currentLocation.coords);
     })();
   }, []);
 
@@ -56,17 +62,14 @@ export default function MapScreen() {
         },
         1000
       );
+    } else {
+      Alert.alert("Info", "La position n’est pas disponible.");
     }
   };
 
-  // if (!location) {
+  // if (loading) {
   //   return (
-  //     <View
-  //       style={[
-  //         styles.container,
-  //         { justifyContent: "center", alignItems: "center" },
-  //       ]}
-  //     >
+  //     <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
   //       <ActivityIndicator size="large" color="#FFBE00" />
   //       <Text>Chargement de la carte...</Text>
   //     </View>
@@ -78,16 +81,16 @@ export default function MapScreen() {
       <MapView
         ref={mapRef}
         style={styles.map}
-        initialRegion={region}
+        initialRegion={location || region}
         followsUserLocation={true}
+        showsUserLocation={true}
         zoomControlEnabled
       >
-        {location && <Marker coordinate={location} pinColor="blue" />}
-
+        {location && <Marker coordinate={location} pinColor="blue" title="Vous êtes ici" />}
         {taxis.map((taxi) => (
           <Marker
-            title={taxi.driver}
             key={taxi.id}
+            title={taxi.driver}
             coordinate={taxi.coordinates}
             pinColor="gold"
             description={`Plaque: ${taxi.plate} ⭐${taxi.rating}`}
@@ -102,9 +105,13 @@ export default function MapScreen() {
           />
         ))}
       </MapView>
+
+      {/* Bouton Locate */}
       <TouchableOpacity style={styles.locateButton} onPress={backToOrigin}>
         <Ionicons name="locate" size={28} color="#fff" />
       </TouchableOpacity>
+
+      {/* Bouton Réservation */}
       <TouchableOpacity onPress={() => router.push("reservation")}>
         <Text style={styles.button}>Réserver Taxi 🚕</Text>
       </TouchableOpacity>

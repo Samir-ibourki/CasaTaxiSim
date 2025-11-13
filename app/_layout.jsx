@@ -8,15 +8,15 @@ export default function RootLayout() {
       <Stack.Screen name="maps" />
       <Stack.Screen
         name="reservation"
-        // options={{
-        //   presentation: "formSheet",
-        //   sheetAllowedDetents: [0.7, 0.8],
-        //   sheetGrabberVisible: true,
-        //   sheetCornerRadius:30,
+        options={{
+          presentation: "formSheet",
+          sheetAllowedDetents: [0.7, 0.8],
+          sheetGrabberVisible: true,
+          sheetCornerRadius:30,
           
 
           
-        // }}
+        }}
       />
     </Stack>
   );

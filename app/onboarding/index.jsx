@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { onboardingData } from "./data";
+import { onboardingData } from "../../data/data";
 
 export default function Onboarding() {
   const [currentIndex, setCurrentIndex] = useState(0);
