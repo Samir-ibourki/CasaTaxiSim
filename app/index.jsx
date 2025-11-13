@@ -9,7 +9,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-//import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Index() {
   const progress = useSharedValue(0);
