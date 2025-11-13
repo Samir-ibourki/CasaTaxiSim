@@ -1,58 +1,33 @@
-// import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-// import { useLocalSearchParams, router } from "expo-router";
 // import { Ionicons } from "@expo/vector-icons";
-
-// export default function TaxiDetails() {
-//   const { driver, plate, rating, distance, price } = useLocalSearchParams();
+// import { router } from "expo-router";
+// import { useState } from "react";
+// import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+// import DropDownPicker from "react-native-dropdown-picker";
+// import { locations } from "../data/taxidata";
+// export default function Reservation() {
+//   const [open, setOpen] = useState(false);
+//   const [value, setValue] = useState(null);
+//   const [items, setItems] = useState(
+//     locations.map((loc) => ({ label: loc.name, value: loc.name }))
+//   );
 
 //   return (
 //     <View style={styles.container}>
-//       {/* Header */}
 //       <View style={styles.header}>
-//         <TouchableOpacity onPress={() => router.back()}>
+//         <TouchableOpacity onPress={() => router.back("maps")}>
 //           <Ionicons name="arrow-back" size={26} color="#111" />
 //         </TouchableOpacity>
 //         <Text style={styles.headerTitle}>Détails du Taxi</Text>
 //       </View>
-
-//       {/* Card */}
-//       <View style={styles.card}>
-//         <Image
-//           source={{
-//             uri: "https://cdn-icons-png.flaticon.com/512/3097/3097144.png",
-//           }}
-//           style={styles.taxiImage}
-//         />
-
-//         <Text style={styles.driverName}>{driver}</Text>
-//         <Text style={styles.plate}>🚘 Plaque: {plate}</Text>
-
-//         <View style={styles.infoRow}>
-//           <Ionicons name="star" size={20} color="gold" />
-//           <Text style={styles.rating}>{rating} / 5</Text>
-//         </View>
-
-//         <View style={styles.divider} />
-
-//         <View style={styles.row}>
-//           <Ionicons name="navigate" size={20} color="#111" />
-//           <Text style={styles.text}>Distance: {distance} km</Text>
-//         </View>
-
-//         <View style={styles.row}>
-//           <Ionicons name="cash" size={20} color="#111" />
-//           <Text style={styles.text}>Prix estimé: {price} DH</Text>
-//         </View>
-//       </View>
-
-//       {/* Button */}
-//       <TouchableOpacity
-//         style={styles.button}
-//         onPress={() => alert("✅ Taxi réservé avec succès !")}
-//       >
-//         <Ionicons name="checkmark-circle" size={22} color="#fff" />
-//         <Text style={styles.buttonText}>Confirmer la réservation</Text>
-//       </TouchableOpacity>
+//       <DropDownPicker
+//         open={open}
+//         value={value}
+//         items={items}
+//         setOpen={setOpen}
+//         setValue={setValue}
+//         setItems={setItems}
+//         placeholder="Choisir une destination"
+//       />
 //     </View>
 //   );
 // }
@@ -62,7 +37,7 @@
 //     flex: 1,
 //     backgroundColor: "#f5f5f5",
 //     paddingTop: 50,
-//     alignItems: "center",
+//     paddingHorizontal: 24,
 //   },
 //   header: {
 //     flexDirection: "row",
@@ -75,100 +50,157 @@
 //     fontWeight: "bold",
 //     marginLeft: 10,
 //   },
-//   card: {
-//     backgroundColor: "#fff",
-//     borderRadius: 20,
-//     padding: 25,
-//     width: "90%",
-//     alignItems: "center",
-//     shadowColor: "#000",
-//     shadowOpacity: 0.1,
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowRadius: 6,
-//     elevation: 4,
-//   },
-//   taxiImage: {
-//     width: 80,
-//     height: 80,
-//     marginBottom: 15,
-//   },
-//   driverName: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//     color: "#111",
-//   },
-//   plate: {
-//     fontSize: 15,
-//     marginVertical: 4,
-//     color: "#444",
-//   },
-//   infoRow: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginTop: 6,
-//   },
-//   rating: {
-//     marginLeft: 4,
-//     fontSize: 16,
-//     color: "#333",
-//   },
-//   divider: {
-//     height: 1,
-//     backgroundColor: "#ddd",
-//     width: "80%",
-//     marginVertical: 15,
-//   },
-//   row: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginVertical: 4,
-//   },
-//   text: {
-//     fontSize: 16,
-//     marginLeft: 8,
-//     color: "#333",
-//   },
-//   button: {
-//     position: "absolute",
-//     bottom: 40,
-//     backgroundColor: "#111",
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     paddingHorizontal: 30,
-//     paddingVertical: 14,
-//     borderRadius: 30,
-//     gap: 10,
-//   },
-//   buttonText: {
-//     color: "#fff",
-//     fontSize: 16,
-//     fontWeight: "bold",
-//   },
 // });
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
+import Animated, { FadeIn, SlideInUp } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
+import { calculateDistance, calculatePrice } from "../utils/distance";
+import { locations } from "../data/taxidata";
 
+export default function ReservationScreen() {
+  // Dropdown states
+  const [openDepart, setOpenDepart] = React.useState(false);
+  const [depart, setDepart] = React.useState(null);
+  const [itemsDepart, setItemsDepart] = React.useState(
+    locations.map((loc) => ({ label: loc.name, value: loc }))
+  );
 
+  const [openDest, setOpenDest] = React.useState(false);
+  const [destination, setDestination] = React.useState(null);
+  const [itemsDest, setItemsDest] = React.useState(
+    locations.map((loc) => ({ label: loc.name, value: loc }))
+  );
 
+  // Calculated distance & price
+  const distanceKm = depart && destination ? calculateDistance(depart.coordinates, destination.coordinates) : 0;
+  const price = distanceKm ? calculatePrice(distanceKm) : 0;
 
+  const handleConfirm = () => {
+    alert(`Réservation confirmée!\nDistance: ${distanceKm} km\nPrix: ${price} DH`);
+  };
 
-
-
-
-import { Text } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-export default function reservation() {
   return (
-    <SafeAreaView style={{flex:1 , justifyContent: 'center' , alignItems: 'center'}}>
-      <Text>reservation</Text>
-    </SafeAreaView>
-  )
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Text style={styles.title}>Réservation Taxi</Text>
+
+      {/* Dropdown Depart */}
+      <Text style={styles.label}>Départ</Text>
+      <DropDownPicker
+        open={openDepart}
+        value={depart}
+        items={itemsDepart}
+        setOpen={setOpenDepart}
+        setValue={setDepart}
+        setItems={setItemsDepart}
+        placeholder="Choisir départ"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+        zIndex={3000}
+      />
+
+      
+      <Text style={styles.label}>Destination</Text>
+      <DropDownPicker
+        open={openDest}
+        value={destination}
+        items={itemsDest}
+        setOpen={setOpenDest}
+        setValue={setDestination}
+        setItems={setItemsDest}
+        placeholder="Choisir destination"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+        zIndex={2000}
+      />
+
+    
+      {depart && destination && (
+  <Animated.View entering={FadeIn.delay(400)} style={styles.resultBox}>
+    <Text style={styles.resultText}>
+      Distance: {distanceKm.toFixed(2)} km
+    </Text>
+    <Text style={styles.resultText}>
+      Prix estimé: {price.toFixed(2)} DH
+    </Text>
+  </Animated.View>
+)}
+
+
+      
+      {depart && destination && (
+        <Animated.View entering={SlideInUp.delay(600)} style={{ width: "100%" }}>
+          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+            <LinearGradient colors={["#fd6e4b", "#ff9f6d"]} style={styles.confirmGradient}>
+              <Text style={styles.confirmText}>Confirmer la réservation</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+    </ScrollView>
+  );
 }
 
-
-
-
-
-
-
-
-
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: "#fff8f0",
+    flexGrow: 1,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#fd6e4b",
+    textAlign: "center",
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 5,
+    marginTop: 15,
+    color: "#333",
+  },
+  dropdown: {
+    borderColor: "#fd6e4b",
+    backgroundColor: "#fff",
+  },
+  dropdownContainer: {
+    borderColor: "#fd6e4b",
+  },
+  resultBox: {
+    marginTop: 30,
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  resultText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 5,
+  },
+  confirmButton: {
+    marginTop: 30,
+    borderRadius: 25,
+    overflow: "hidden",
+    alignSelf: "center",
+    width: "100%",
+  },
+  confirmGradient: {
+    paddingVertical: 15,
+    alignItems: "center",
+    borderRadius: 25,
+  },
+  confirmText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+});
