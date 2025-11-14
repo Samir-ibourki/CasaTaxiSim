@@ -402,6 +402,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 18,
     elevation: 6,
+    marginBottom:25
   },
 
   confirmButtonDisabled: {
