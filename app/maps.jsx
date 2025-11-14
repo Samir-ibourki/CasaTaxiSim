@@ -83,7 +83,7 @@ export default function MapScreen() {
         style={styles.map}
         initialRegion={location || region}
         followsUserLocation={true}
-        showsUserLocation={true}
+       
         zoomControlEnabled
       >
         {location && <Marker coordinate={location} pinColor="blue" title="Vous êtes ici" />}
@@ -115,6 +115,12 @@ export default function MapScreen() {
       <TouchableOpacity onPress={() => router.push("reservation")}>
         <Text style={styles.button}>Réserver Taxi 🚕</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+  style={styles.historyButton}
+  onPress={() => router.push("historique")}
+>
+  <Ionicons name="time-outline" size={24} color="#fff" />
+</TouchableOpacity>
     </View>
   );
 }
@@ -125,6 +131,19 @@ const styles = StyleSheet.create({
   locateButton: {
     position: "absolute",
     top: 50,
+    right: 20,
+    backgroundColor: "#111",
+    padding: 14,
+    borderRadius: 50,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+   historyButton: { 
+    position: "absolute",
+    top: 110, 
     right: 20,
     backgroundColor: "#111",
     padding: 14,
