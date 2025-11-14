@@ -6,16 +6,10 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="onboarding/index" />
+        <Stack.Screen name="onboarding" />
         <Stack.Screen name="maps" />
         <Stack.Screen
           name="reservation"
-          // options={{
-          //   presentation: "formSheet",
-          //   sheetAllowedDetents: [0.7, 0.8],
-          //   sheetGrabberVisible: true,
-          //   sheetCornerRadius:30,
-          // }}
         />
         <Stack.Screen
           name="enCours"

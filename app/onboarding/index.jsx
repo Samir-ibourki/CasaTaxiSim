@@ -13,6 +13,8 @@ import { onboardingData } from "../../data/data";
 export default function Onboarding() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const [currentSlide, setCurrentSlide] = useState([]);
+
   const opacity = useSharedValue(1);
   const translateX = useSharedValue(0);
 
@@ -34,10 +36,10 @@ export default function Onboarding() {
   }, [currentIndex]);
 
   const nextSlide = () => {
-    if (currentIndex < onboardingData.length - 1) {
+    if (onboardingData && currentIndex < (onboardingData?.length ?? 0) - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      router.push("/maps");
+      router.push("maps");
     }
   };
   const prevSlide = () => {
@@ -46,18 +48,23 @@ export default function Onboarding() {
     }
   };
 
-  const currentSlide = onboardingData[currentIndex];
+  useEffect(() => {
+    if (onboardingData) {
+      setCurrentSlide(onboardingData[currentIndex]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, onboardingData]);
 
   return (
     <SafeAreaView style={styles.safe}>
       <Animated.View style={[styles.container, animatedStyle]}>
         <Image
-          source={currentSlide.image}
+          source={currentSlide?.image}
           resizeMode="contain"
           style={styles.image}
         />
-        <Text style={styles.title}>{currentSlide.title}</Text>
-        <Text style={styles.subtitle}>{currentSlide.description}</Text>
+        <Text style={styles.title}>{currentSlide?.title}</Text>
+        <Text style={styles.subtitle}>{currentSlide?.description}</Text>
 
         <View style={styles.btns}>
           {currentIndex > 0 && (
@@ -67,7 +74,7 @@ export default function Onboarding() {
           )}
           <TouchableOpacity onPress={nextSlide}>
             <Text style={styles.next}>
-              {currentIndex === onboardingData.length - 1
+              {currentIndex === onboardingData?.length - 1
                 ? "Get Started"
                 : "Next"}
             </Text>

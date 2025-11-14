@@ -35,7 +35,7 @@ export const useTaxiStore = create((set, get) => ({
   },
 
   pickDestination: (loc) => {
-    const userCoords = { latitude: 33.5902, longitude: -7.6200 }; // simulé
+    const userCoords = { latitude: 33.5902, longitude: -7.6200 }; 
     const dist = calculateDistance(userCoords, loc.coordinates);
     const pr = calculatePrice(dist);
 

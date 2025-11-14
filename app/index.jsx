@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -9,7 +8,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-
 
 export default function Index() {
   const progress = useSharedValue(0);
@@ -22,25 +20,10 @@ export default function Index() {
   useEffect(() => {
     progress.value = withTiming(1, { duration: 1500 });
     translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
-    setTimeout(()=>{
-      router.replace('maps')
-    },3400)
-  }, [progress, translateY]);
-  useEffect(() => {
-    progress.value = withTiming(1, { duration: 1500 });
-    translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
-
-    // Delay then check onboarding
-    setTimeout(async () => {
-      const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
-      if (!hasSeenOnboarding) {
-        await AsyncStorage.setItem("hasSeenOnboarding", "true");
-        router.replace("onboarding"); 
-      } else {
-        router.replace("maps"); 
-      }
-    }, 3400);
-  }, [progress, translateY]);
+    setTimeout(() => {
+      router.replace("onboarding");
+    }, 2800);
+  }, []);
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.center, animatedStyle]}>
@@ -81,6 +64,6 @@ const styles = StyleSheet.create({
     color: "#302e2eff",
     width: 350,
     lineHeight: 25,
-    fontWeight:700
+    fontWeight: 700,
   },
 });
