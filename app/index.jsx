@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -24,6 +25,21 @@ export default function Index() {
     setTimeout(()=>{
       router.replace('maps')
     },3400)
+  }, [progress, translateY]);
+  useEffect(() => {
+    progress.value = withTiming(1, { duration: 1500 });
+    translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
+
+    // Delay then check onboarding
+    setTimeout(async () => {
+      const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
+      if (!hasSeenOnboarding) {
+        await AsyncStorage.setItem("hasSeenOnboarding", "true");
+        router.replace("onboarding"); 
+      } else {
+        router.replace("maps"); 
+      }
+    }, 3400);
   }, [progress, translateY]);
   return (
     <View style={styles.container}>
